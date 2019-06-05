@@ -1,9 +1,0 @@
-C:\Users\tiago.vital\source\repos\farfetchforall.simulator\farfetchforall.simulator\bin\Debug\netcoreapp2.1\FarfetchForAll.Simulator.deps.json
-C:\Users\tiago.vital\source\repos\farfetchforall.simulator\farfetchforall.simulator\bin\Debug\netcoreapp2.1\FarfetchForAll.Simulator.dll
-C:\Users\tiago.vital\source\repos\farfetchforall.simulator\farfetchforall.simulator\bin\Debug\netcoreapp2.1\FarfetchForAll.Simulator.pdb
-C:\Users\tiago.vital\source\repos\farfetchforall.simulator\farfetchforall.simulator\obj\Debug\netcoreapp2.1\farfetchforall.simulator.csprojAssemblyReference.cache
-C:\Users\tiago.vital\source\repos\farfetchforall.simulator\farfetchforall.simulator\obj\Debug\netcoreapp2.1\farfetchforall.simulator.csproj.CoreCompileInputs.cache
-C:\Users\tiago.vital\source\repos\farfetchforall.simulator\farfetchforall.simulator\obj\Debug\netcoreapp2.1\farfetchforall.simulator.AssemblyInfoInputs.cache
-C:\Users\tiago.vital\source\repos\farfetchforall.simulator\farfetchforall.simulator\obj\Debug\netcoreapp2.1\farfetchforall.simulator.AssemblyInfo.cs
-C:\Users\tiago.vital\source\repos\farfetchforall.simulator\farfetchforall.simulator\obj\Debug\netcoreapp2.1\FarfetchForAll.Simulator.dll
-C:\Users\tiago.vital\source\repos\farfetchforall.simulator\farfetchforall.simulator\obj\Debug\netcoreapp2.1\FarfetchForAll.Simulator.pdb
