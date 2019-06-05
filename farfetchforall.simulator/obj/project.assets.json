@@ -695,7 +695,7 @@
     "version": "1.0.0",
     "restore": {
       "projectUniqueName": "C:\\Users\\tiago.vital\\source\\repos\\farfetchforall.simulator\\farfetchforall.simulator\\farfetchforall.simulator.csproj",
-      "projectName": "farfetchforall.simulator",
+      "projectName": "FarfetchForAll.Simulator",
       "projectPath": "C:\\Users\\tiago.vital\\source\\repos\\farfetchforall.simulator\\farfetchforall.simulator\\farfetchforall.simulator.csproj",
       "packagesPath": "C:\\Users\\tiago.vital\\.nuget\\packages\\",
       "outputPath": "C:\\Users\\tiago.vital\\source\\repos\\farfetchforall.simulator\\farfetchforall.simulator\\obj\\",
