@@ -6,7 +6,6 @@
     public class ScenarioResult
     {
         public string Name { get; set; }
-        public SharesInfo SharesInfo { get; internal set; }
 
         public IEnumerable<YearResult> Results { get; set; }
     }

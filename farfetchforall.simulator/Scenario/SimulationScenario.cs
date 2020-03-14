@@ -1,10 +1,12 @@
 ﻿namespace FarfetchForAll.Simulator.Scenario
 {
+    using System;
     using System.Collections.Generic;
     using System.Linq;
+    using FarfetchForAll.Simulator.Shares;
     using FarfetchForAll.Simulator.Taxes;
 
-    public abstract class SimulationScenario
+    public class SimulationScenario
     {
         private readonly ITaxCalculator taxCalculator;
 
@@ -15,32 +17,47 @@
 
         protected TaxPayer TaxPayer { get; private set; }
 
-        public ScenarioResult Run(TaxPayer taxPayer)
+        public virtual ScenarioResult Run(
+            TaxPayer taxPayer,
+            List<ShareMvt> shareMovements)
         {
             this.TaxPayer = taxPayer;
 
-            var sharesInfo = this.BuildSharesInfo();
+            IEnumerable<YearResult> yearResults;
 
-            var yearMovements = sharesInfo.SharesMovements
-               .GroupBy(i => i.Year)
-               .Select(i => YearResult(taxPayer, i.Key, i))
-               .ToList();
+            if (shareMovements.Count > 0)
+            {
+                yearResults = shareMovements
+                   .GroupBy(i => i.MovementYear)
+                   .Select(i => YearResult(taxPayer, i.Key, i))
+                   .ToList();
+            }
+            else
+            {
+                yearResults = new List<YearResult>()
+                {
+                    new YearResult{ TaxResult = this.taxCalculator.Run(taxPayer, shareMovements), Year = DateTime.Now.Year }
+                };
+            }
 
             return new ScenarioResult
             {
                 Name = this.GetType().Name,
-                SharesInfo = sharesInfo,
-                Results = yearMovements
+                Results = yearResults
             };
         }
 
-        protected abstract SharesInfo BuildSharesInfo();
-
-        protected YearResult YearResult(TaxPayer taxPayer, int year, IEnumerable<ShareMovement> shareMovements)
+        protected YearResult YearResult(TaxPayer taxPayer, int year, IEnumerable<ShareMvt> shareMovements)
         {
+            var baseTaxResult = this.taxCalculator.Run(taxPayer, new List<ShareMvt>());
+
             var taxResult = this.taxCalculator.Run(taxPayer, shareMovements);
 
-            var sharesProfit = shareMovements.Sum(i => i.SellIncome.GetValueOrDefault()) - taxResult.TaxToPay;
+            var taxDiff = baseTaxResult.TaxSettling - taxResult.TaxSettling;
+
+            var sharesProfit = shareMovements
+                .Where(i => i.MovementType == ShareMovementType.Sell)
+                .Sum(i => i.Income) - taxDiff;
 
             return new YearResult
             {
