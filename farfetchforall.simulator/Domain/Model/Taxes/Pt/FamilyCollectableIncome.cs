@@ -4,7 +4,7 @@ namespace FarfetchForAll.Simulator.Taxes.Pt
 {
     public class FamilyCollectableIncome
     {
-        public TaxParcel Calculate(TaxPayer aggregateInfo, float amount)
+        public TaxParcel Calculate(FamilyAggregate aggregateInfo, float amount)
         {
             var collectableAmount = aggregateInfo.AnualGain + amount - aggregateInfo.SpecificDeductions;
             return new TaxParcel

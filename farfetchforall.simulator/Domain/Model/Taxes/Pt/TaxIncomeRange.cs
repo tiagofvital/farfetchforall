@@ -22,7 +22,7 @@
             };
         }
 
-        public TaxParcel Calculate(float income, TaxPayer aggregateInfo)
+        public TaxParcel Calculate(float income, FamilyAggregate aggregateInfo)
         {
             var individualIncome = income / aggregateInfo.FamilyCoeficient;
 

@@ -24,7 +24,7 @@
             this.shareDomainService = shareDomainService;
         }
 
-        public Task<Unit> Handle(VestShareCommand vestShareCommand, CancellationToken cancellationToken)
+        public async Task<Unit> Handle(VestShareCommand vestShareCommand, CancellationToken cancellationToken)
         {
             this.shareDomainService.From(vestShareCommand)
                 .ToList()
@@ -37,10 +37,10 @@
                     this.mediator.Publish(evt);
                 });
 
-            return Unit.Task;
+            return await Unit.Task;
         }
 
-        public Task<Unit> Handle(SellShareCommand cmd, CancellationToken cancellationToken)
+        public async Task<Unit> Handle(SellShareCommand cmd, CancellationToken cancellationToken)
         {
             var spec = new VestedSharesSpecification();
 
@@ -55,7 +55,7 @@
                     this.mediator.Publish(evt);
                 });
 
-            return Unit.Task;
+            return await Unit.Task;
         }
     }
 }

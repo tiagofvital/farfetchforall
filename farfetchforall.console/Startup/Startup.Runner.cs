@@ -6,6 +6,7 @@
     using CommandLine;
     using FarfetchForAll.Console;
     using FarfetchForAll.Console.Printer;
+    using FarfetchForAll.Simulator.Commands;
     using FarfetchForAll.Simulator.Controllers;
     using FarfetchForAll.Simulator.Queries;
     using FarfetchForAll.Simulator.Scenario;
@@ -17,26 +18,11 @@
     {
         private ShareControllers controller;
         private IMediator mediator;
-        private TaxPayer aggregateInfo;
-
-        public Startup ConfigureAggregateInfo()
-        {
-            this.aggregateInfo = new TaxPayerBuilder()
-                .WithAnualGain(45430.98F)
-                .WithFamilyCoeficient(2)
-                .WithDeductionsToTax(2113.14F)
-                .WithSpecificDeductions(4388.58F)
-                .WithTaxPayed(198 + 7943)
-                .Build();
-
-            return this;
-        }
 
         public void Run(Container container)
         {
             this.controller = container.GetInstance<ShareControllers>();
             this.mediator = container.GetInstance<IMediator>();
-
             do
             {
                 try
@@ -45,11 +31,12 @@
                     System.Console.WriteLine("Enter command: --help for instructions");
                     var args = System.Console.ReadLine()?.Split(' ');
 
-                    var r = Parser.Default.ParseArguments<SellOptions, VestOptions, ShowOptions>(args)
+                    var r = Parser.Default.ParseArguments<SellOptions, VestOptions, ShowOptions, AggregateOptions>(args)
                         .MapResult(
                         (VestOptions opts) => VestOptions(opts),
                         (SellOptions opts) => SellOptions(opts),
                         (ShowOptions opts) => ShowOptions(opts),
+                        (AggregateOptions opts) => SetAggregate(opts),
                         errs => ShowErrors(errs));
                 }
                 catch (Exception ex)
@@ -57,6 +44,23 @@
                     Console.WriteLine(ex.ToString());
                 }
             } while (true);
+        }
+
+        private int SetAggregate(AggregateOptions opts)
+        {
+            var aggregateInfoCmd = new CreateFamilyAggregateCommand()
+            {
+                Id = Guid.NewGuid().ToString(),
+                AnualGain = opts.AnualGain,
+                FamilyCoeficient = opts.FamilyCoeficient,
+                TaxDeductions = opts.TaxDeductions,
+                TaxPayed = opts.TaxPayed,
+                SpecificDeductions = opts.SpecificDeductions,
+            };
+
+            this.mediator.Send(aggregateInfoCmd);
+
+            return 1;
         }
 
         private int SimulationOptions(SimulationOptions opts)
@@ -95,6 +99,12 @@
             if (opts.Taxes)
             {
                 var baseScenario = new SimulationScenario(new IRSCalculator());
+
+                var request = new GetFamilyAggregateInfo();
+
+                var aggregateInfo = this.mediator.Send(request)
+                .GetAwaiter()
+                .GetResult();
 
                 var baseResult = baseScenario.Run(aggregateInfo, shareMvts.Movements.ToList());
 

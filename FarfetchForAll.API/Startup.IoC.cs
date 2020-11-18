@@ -1,4 +1,4 @@
-﻿namespace FarfetchForAll.ConsoleApp
+﻿namespace Presentation.API
 {
     using System;
     using System.Collections.Generic;
@@ -19,11 +19,9 @@
         {
             container.RegisterSingleton<SharesRepository>();
             container.RegisterSingleton<ShareMovementsRepository>();
-            container.RegisterSingleton<FamilyAggregateRepository>();
 
             container.Register<ShareHandler>();
             container.Register<ShareMovementsHandler>();
-            container.Register<FamilyAggregateHandler>();
 
             container.Register<ShareControllers>();
 

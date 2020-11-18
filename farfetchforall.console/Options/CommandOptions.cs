@@ -1,7 +1,7 @@
-﻿using CommandLine;
-
-namespace FarfetchForAll.ConsoleApp
+﻿namespace FarfetchForAll.ConsoleApp
 {
+    using CommandLine;
+
     [Verb("sim", HelpText = "Simulation options")]
     public class SimulationOptions
     {
@@ -43,5 +43,24 @@ namespace FarfetchForAll.ConsoleApp
     {
         [Option('a', "all", Required = false, HelpText = "Includes taxes results.")]
         public bool Taxes { get; set; }
+    }
+
+    [Verb("setAggregate", HelpText = "Sets Aggregate Info")]
+    public class AggregateOptions
+    {
+        [Option('a', "Anual Gain", Required = false, HelpText = "")]
+        public float AnualGain { get; set; }
+
+        [Option('f', "Family Coeficient", Required = false, HelpText = "")]
+        public int FamilyCoeficient { get; set; }
+
+        [Option('d', "Tax Deductions", Required = false, HelpText = "")]
+        public float TaxDeductions { get; set; }
+
+        [Option('p', "Tax Payed", Required = false, HelpText = "")]
+        public float TaxPayed { get; set; }
+
+        [Option('s', "Specific Deductions", Required = false, HelpText = "")]
+        public float SpecificDeductions { get; set; }
     }
 }

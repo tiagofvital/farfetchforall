@@ -15,10 +15,10 @@
             this.taxCalculator = taxCalculator;
         }
 
-        protected TaxPayer TaxPayer { get; private set; }
+        protected FamilyAggregate TaxPayer { get; private set; }
 
         public virtual ScenarioResult Run(
-            TaxPayer taxPayer,
+            FamilyAggregate taxPayer,
             List<ShareMvt> shareMovements)
         {
             this.TaxPayer = taxPayer;
@@ -47,7 +47,7 @@
             };
         }
 
-        protected YearResult YearResult(TaxPayer taxPayer, int year, IEnumerable<ShareMvt> shareMovements)
+        protected YearResult YearResult(FamilyAggregate taxPayer, int year, IEnumerable<ShareMvt> shareMovements)
         {
             var baseTaxResult = this.taxCalculator.Run(taxPayer, new List<ShareMvt>());
 

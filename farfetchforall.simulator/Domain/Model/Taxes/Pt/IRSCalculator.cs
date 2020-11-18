@@ -12,7 +12,7 @@
         private TaxableIncome taxableIncome = new TaxableIncome();
         private TaxSettlement taxSettlement = new TaxSettlement();
 
-        public TaxResult Run(TaxPayer aggregateInfo, IEnumerable<ShareMvt> shareMovements)
+        public TaxResult Run(FamilyAggregate aggregateInfo, IEnumerable<ShareMvt> shareMovements)
         {
             var result = new TaxResult();
 

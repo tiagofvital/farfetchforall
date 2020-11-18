@@ -6,6 +6,6 @@
 
     public interface ITaxCalculator
     {
-        TaxResult Run(TaxPayer aggregateInfo, IEnumerable<ShareMvt> shareMovements);
+        TaxResult Run(FamilyAggregate aggregateInfo, IEnumerable<ShareMvt> shareMovements);
     }
 }

@@ -1,7 +1,7 @@
-﻿using FarfetchForAll.Simulator.Domain.Model.Shares;
-
-namespace FarfetchForAll.Simulator.Shares
+﻿namespace FarfetchForAll.Simulator.Shares
 {
+    using FarfetchForAll.Simulator.Domain.Model.Shares;
+
     public class Share : Entity
     {
         public enum ShareState
@@ -18,5 +18,7 @@ namespace FarfetchForAll.Simulator.Shares
         public int VestedYear { get; set; }
 
         public ShareState State { get; set; }
+
+        public string FamillyAggregateId { get; set; }
     }
 }

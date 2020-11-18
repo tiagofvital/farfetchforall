@@ -1,8 +1,10 @@
 ﻿namespace FarfetchForAll.Simulator.Scenario
 {
-    public class TaxPayer
+    public class FamilyAggregate
     {
-        internal float SpecificDeductions;
+        public string Id { get; set; }
+
+        public float SpecificDeductions { get; set; }
 
         public float AnualGain { get; set; }
 
