@@ -2,12 +2,12 @@
 {
     public class TaxSettlement
     {
-        public TaxParcel Calculate(float taxPayed, float amount)
+        public TaxParcel Calculate(float taxPayed, float taxAmount)
         {
             return new TaxParcel
             {
                 Name = "Acerto (Valor a Pagar / Receber)",
-                Amount = taxPayed - amount
+                Amount = taxPayed - taxAmount
             };
         }
     }

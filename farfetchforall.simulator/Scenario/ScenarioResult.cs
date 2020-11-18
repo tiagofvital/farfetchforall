@@ -12,7 +12,7 @@
 
     public class YearResult
     {
-        public TaxResult TaxResult { get; set; }
+        public TaxFile TaxResult { get; set; }
 
         public float SharesProfit { get; internal set; }
 

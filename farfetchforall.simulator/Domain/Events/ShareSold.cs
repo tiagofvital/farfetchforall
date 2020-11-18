@@ -11,5 +11,7 @@
         public float ExerciseCost { get; set; }
 
         public int Year { get; set; }
+
+        public string TransactionId { get; set; }
     }
 }

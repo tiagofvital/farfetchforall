@@ -8,20 +8,19 @@
 
     public class SimulationScenario
     {
-        private readonly ITaxCalculator taxCalculator;
+        private readonly ITaxFileBuilder taxCalculator;
 
-        public SimulationScenario(ITaxCalculator taxCalculator)
+        public SimulationScenario(ITaxFileBuilder taxCalculator)
         {
             this.taxCalculator = taxCalculator;
         }
-
-        protected FamilyAggregate TaxPayer { get; private set; }
 
         public virtual ScenarioResult Run(
             FamilyAggregate taxPayer,
             List<ShareMvt> shareMovements)
         {
-            this.TaxPayer = taxPayer;
+            this.taxCalculator
+                .With(taxPayer);
 
             IEnumerable<YearResult> yearResults;
 
@@ -29,14 +28,14 @@
             {
                 yearResults = shareMovements
                    .GroupBy(i => i.MovementYear)
-                   .Select(i => YearResult(taxPayer, i.Key, i))
+                   .Select(i => YearResult(i.Key, i))
                    .ToList();
             }
             else
             {
                 yearResults = new List<YearResult>()
                 {
-                    new YearResult{ TaxResult = this.taxCalculator.Run(taxPayer, shareMovements), Year = DateTime.Now.Year }
+                    new YearResult{ TaxResult = this.taxCalculator.With(shareMovements).Build(), Year = DateTime.Now.Year }
                 };
             }
 
@@ -47,11 +46,15 @@
             };
         }
 
-        protected YearResult YearResult(FamilyAggregate taxPayer, int year, IEnumerable<ShareMvt> shareMovements)
+        protected YearResult YearResult(int year, IEnumerable<ShareMvt> shareMovements)
         {
-            var baseTaxResult = this.taxCalculator.Run(taxPayer, new List<ShareMvt>());
+            var baseTaxResult = this.taxCalculator
+                .With(new List<ShareMvt>())
+                .Build();
 
-            var taxResult = this.taxCalculator.Run(taxPayer, shareMovements);
+            var taxResult = this.taxCalculator
+                .With(shareMovements)
+                .Build();
 
             var taxDiff = baseTaxResult.TaxSettling - taxResult.TaxSettling;
 

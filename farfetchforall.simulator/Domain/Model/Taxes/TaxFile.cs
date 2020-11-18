@@ -2,7 +2,7 @@
 {
     using System.Collections.Generic;
 
-    public class TaxResult
+    public class TaxFile
     {
         public float TaxSettling { get; set; }
 

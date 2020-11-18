@@ -23,6 +23,7 @@
         {
             this.controller = container.GetInstance<ShareControllers>();
             this.mediator = container.GetInstance<IMediator>();
+
             do
             {
                 try
@@ -31,12 +32,14 @@
                     System.Console.WriteLine("Enter command: --help for instructions");
                     var args = System.Console.ReadLine()?.Split(' ');
 
-                    var r = Parser.Default.ParseArguments<SellOptions, VestOptions, ShowOptions, AggregateOptions>(args)
+                    var r = Parser.Default.ParseArguments<SellOptions, VestOptions, ShowOptions, AggregateOptions, UndoOptions, ResetOptions>(args)
                         .MapResult(
                         (VestOptions opts) => VestOptions(opts),
                         (SellOptions opts) => SellOptions(opts),
                         (ShowOptions opts) => ShowOptions(opts),
                         (AggregateOptions opts) => SetAggregate(opts),
+                        (UndoOptions opts) => Undo(),
+                        (ResetOptions opts) => Reset(),
                         errs => ShowErrors(errs));
                 }
                 catch (Exception ex)
@@ -44,6 +47,39 @@
                     Console.WriteLine(ex.ToString());
                 }
             } while (true);
+        }
+
+        private int Reset()
+        {
+            var clearMovementsCommand = new ClearMovementsCommand();
+            this.mediator.Send(clearMovementsCommand);
+
+            ShowOptions(new ShowOptions { Taxes = true });
+
+            return 1;
+        }
+
+        private int Undo()
+        {
+            var shareMvts = this.mediator.Send(new GetShareMovements())
+                .GetAwaiter()
+                .GetResult();
+
+            var lastMvt = shareMvts.Movements.Last();
+
+            if (lastMvt != null)
+            {
+                var clearMovementsCommand = new ClearMovementsCommand()
+                {
+                    TransactionId = lastMvt.TransactionId
+                };
+
+                this.mediator.Send(clearMovementsCommand);
+
+                ShowOptions(new ShowOptions { Taxes = true });
+            }
+
+            return 1;
         }
 
         private int SetAggregate(AggregateOptions opts)
@@ -59,13 +95,6 @@
             };
 
             this.mediator.Send(aggregateInfoCmd);
-
-            return 1;
-        }
-
-        private int SimulationOptions(SimulationOptions opts)
-        {
-            ShowOptions(new ShowOptions { Taxes = true });
 
             return 1;
         }
@@ -98,7 +127,7 @@
 
             if (opts.Taxes)
             {
-                var baseScenario = new SimulationScenario(new IRSCalculator());
+                var baseScenario = new SimulationScenario(new IRSTaxFileBuilder());
 
                 var request = new GetFamilyAggregateInfo();
 

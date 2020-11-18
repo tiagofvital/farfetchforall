@@ -3,29 +3,25 @@
     using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
-    using FarfetchForAll.Simulator.Domain.Services;
+    using FarfetchForAll.Simulator.Commands;
     using FarfetchForAll.Simulator.DomainEvents;
     using FarfetchForAll.Simulator.Queries;
     using FarfetchForAll.Simulator.Repositories;
     using FarfetchForAll.Simulator.Shares;
     using MediatR;
 
-    public class ShareMovementsHandler : INotificationHandler<ShareVested>, INotificationHandler<ShareSold>, IRequestHandler<GetShareMovements, GetShareMovementsResult>
+    public class ShareMovementsHandler : INotificationHandler<ShareVested>, INotificationHandler<ShareSold>, IRequestHandler<GetShareMovements, GetShareMovementsResult>, IRequestHandler<ClearMovementsCommand>
     {
         private readonly ShareMovementsRepository shareMovementsRepository;
-        private readonly ShareMovementDomainService shareMovementDomainService;
 
-        public ShareMovementsHandler(
-            ShareMovementsRepository shareMovementsRepository,
-            ShareMovementDomainService shareMovementDomainService)
+        public ShareMovementsHandler(ShareMovementsRepository shareMovementsRepository)
         {
             this.shareMovementsRepository = shareMovementsRepository;
-            this.shareMovementDomainService = shareMovementDomainService;
         }
 
         public Task Handle(ShareVested request, CancellationToken cancellationToken)
         {
-            ShareMvt mvt = this.shareMovementDomainService.CreateFrom(request);
+            ShareMvt mvt = ShareMvt.CreateFrom(request);
 
             this.shareMovementsRepository.Add(mvt);
 
@@ -34,7 +30,7 @@
 
         public Task Handle(ShareSold notification, CancellationToken cancellationToken)
         {
-            ShareMvt mvt = this.shareMovementDomainService.CreateFrom(notification);
+            ShareMvt mvt = ShareMvt.CreateFrom(notification);
 
             this.shareMovementsRepository.Add(mvt);
 
@@ -49,6 +45,13 @@
             {
                 Movements = result
             });
+        }
+
+        public Task<Unit> Handle(ClearMovementsCommand request, CancellationToken cancellationToken)
+        {
+            this.shareMovementsRepository.Clear(request.TransactionId);
+
+            return Unit.Task;
         }
     }
 }

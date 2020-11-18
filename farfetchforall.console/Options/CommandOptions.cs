@@ -2,11 +2,14 @@
 {
     using CommandLine;
 
-    [Verb("sim", HelpText = "Simulation options")]
-    public class SimulationOptions
+    [Verb("undo", HelpText = "Undos last action")]
+    public class UndoOptions
     {
-        [Option('r', "reset", Required = true, HelpText = "Resests simulation.")]
-        public bool Reset { get; set; }
+    }
+
+    [Verb("clear", HelpText = "Clears all movements")]
+    public class ResetOptions
+    {
     }
 
     [Verb("vest", HelpText = "To vest stock options / RSU's.")]

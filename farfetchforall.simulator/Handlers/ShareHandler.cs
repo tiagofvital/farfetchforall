@@ -3,34 +3,31 @@
     using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
-    using FarfetchForAll.Simulator.Domain.Services;
     using FarfetchForAll.Simulator.Events;
     using FarfetchForAll.Simulator.Repositories;
+    using FarfetchForAll.Simulator.Shares;
     using MediatR;
 
     public class ShareHandler : IRequestHandler<VestShareCommand>, IRequestHandler<SellShareCommand>
     {
         private readonly IMediator mediator;
         private readonly SharesRepository sharesRepository;
-        private readonly ShareDomainService shareDomainService;
 
         public ShareHandler(
             IMediator mediator,
-            SharesRepository sharesRepository,
-            ShareDomainService shareDomainService)
+            SharesRepository sharesRepository)
         {
             this.mediator = mediator;
             this.sharesRepository = sharesRepository;
-            this.shareDomainService = shareDomainService;
         }
 
         public async Task<Unit> Handle(VestShareCommand vestShareCommand, CancellationToken cancellationToken)
         {
-            this.shareDomainService.From(vestShareCommand)
+            Share.From(vestShareCommand)
                 .ToList()
                 .ForEach(share =>
                 {
-                    var evt = this.shareDomainService.Vest(share);
+                    var evt = share.Vest(vestShareCommand.TransactionId);
 
                     this.sharesRepository.Add(share);
 
@@ -50,7 +47,7 @@
                 .ToList()
                 .ForEach(share =>
                 {
-                    var evt = this.shareDomainService.Sell(share, cmd.ShareValue, cmd.Year);
+                    var evt = share.Sell(cmd.ShareValue, cmd.Year, cmd.TransactionId);
 
                     this.mediator.Publish(evt);
                 });

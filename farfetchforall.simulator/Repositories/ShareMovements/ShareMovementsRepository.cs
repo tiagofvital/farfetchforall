@@ -17,5 +17,17 @@ namespace FarfetchForAll.Simulator.Repositories
         {
             return this.shareMvts.Select(i => i);
         }
+
+        internal void Clear(string transactionId = null)
+        {
+            if (transactionId == null)
+            {
+                this.shareMvts.Clear();
+            }
+            else
+            {
+                this.shareMvts.RemoveAll(mvt => mvt.TransactionId == transactionId);
+            }
+        }
     }
 }
