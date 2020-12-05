@@ -2,13 +2,10 @@
 {
     using System;
     using System.Collections.Generic;
-    using System.Linq;
     using CommandLine;
     using FarfetchForAll.Console;
     using FarfetchForAll.Console.Printer;
-    using FarfetchForAll.Simulator.Commands;
     using FarfetchForAll.Simulator.Controllers;
-    using FarfetchForAll.Simulator.Queries;
     using FarfetchForAll.Simulator.Scenario;
     using FarfetchForAll.Simulator.Taxes.Pt;
     using MediatR;
@@ -16,12 +13,15 @@
 
     public partial class Startup
     {
-        private ShareControllers controller;
+        private ShareControllers sharesController;
+        private FamilyAggregateController familyAggregateController;
         private IMediator mediator;
 
         public void Run(Container container)
         {
-            this.controller = container.GetInstance<ShareControllers>();
+            this.sharesController = container.GetInstance<ShareControllers>();
+            this.familyAggregateController = container.GetInstance<FamilyAggregateController>();
+
             this.mediator = container.GetInstance<IMediator>();
 
             do
@@ -51,8 +51,7 @@
 
         private int Reset()
         {
-            var clearMovementsCommand = new ClearMovementsCommand();
-            this.mediator.Send(clearMovementsCommand);
+            this.sharesController.Clear();
 
             ShowOptions(new ShowOptions { Taxes = true });
 
@@ -61,84 +60,45 @@
 
         private int Undo()
         {
-            var shareMvts = this.mediator.Send(new GetShareMovements())
-                .GetAwaiter()
-                .GetResult();
-
-            var lastMvt = shareMvts.Movements.Last();
-
-            if (lastMvt != null)
-            {
-                var clearMovementsCommand = new ClearMovementsCommand()
-                {
-                    TransactionId = lastMvt.TransactionId
-                };
-
-                this.mediator.Send(clearMovementsCommand);
-
-                ShowOptions(new ShowOptions { Taxes = true });
-            }
+            this.sharesController.Undo();
+            ShowOptions(new ShowOptions { Taxes = true });
 
             return 1;
         }
 
         private int SetAggregate(AggregateOptions opts)
         {
-            var aggregateInfoCmd = new CreateFamilyAggregateCommand()
-            {
-                Id = Guid.NewGuid().ToString(),
-                AnualGain = opts.AnualGain,
-                FamilyCoeficient = opts.FamilyCoeficient,
-                TaxDeductions = opts.TaxDeductions,
-                TaxPayed = opts.TaxPayed,
-                SpecificDeductions = opts.SpecificDeductions,
-            };
-
-            this.mediator.Send(aggregateInfoCmd);
+            this.familyAggregateController.SetAggregate(
+                opts.AnualGain,
+                opts.FamilyCoeficient,
+                opts.TaxDeductions,
+                opts.TaxPayed,
+                opts.SpecificDeductions);
 
             return 1;
         }
 
         private int VestOptions(VestOptions opts)
         {
-            this.controller.VestShares(opts.Amount, opts.ShareValue, opts.ExerciseCost, opts.Year);
-
-            ShowOptions(new ShowOptions { Taxes = true });
+            this.sharesController.VestShares(opts.Amount, opts.ShareValue, opts.ExerciseCost, opts.Year);
 
             return 1;
         }
 
         private int SellOptions(SellOptions opts)
         {
-            this.controller.Sell(opts.Amount, opts.ShareValue, opts.Year);
-
-            ShowOptions(new ShowOptions { Taxes = true });
+            this.sharesController.Sell(opts.Amount, opts.ShareValue, opts.Year);
 
             return 1;
         }
 
         private int ShowOptions(ShowOptions opts)
         {
-            var shareMvts = this.mediator.Send(new GetShareMovements())
-                .GetAwaiter()
-                .GetResult();
+            var baseScenario = new SimulationScenario(new IRSTaxFileBuilder(), this.mediator);
 
-            shareMvts.Movements.Display();
+            var baseResult = baseScenario.Run();
 
-            if (opts.Taxes)
-            {
-                var baseScenario = new SimulationScenario(new IRSTaxFileBuilder());
-
-                var request = new GetFamilyAggregateInfo();
-
-                var aggregateInfo = this.mediator.Send(request)
-                .GetAwaiter()
-                .GetResult();
-
-                var baseResult = baseScenario.Run(aggregateInfo, shareMvts.Movements.ToList());
-
-                baseResult.Display();
-            }
+            baseResult.Display();
 
             return 1;
         }

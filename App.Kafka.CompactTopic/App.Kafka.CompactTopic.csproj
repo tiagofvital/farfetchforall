@@ -1,0 +1,14 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Confluent.Kafka" Version="1.5.2" />
+    <PackageReference Include="KafkaFlow" Version="1.4.7" />
+    <PackageReference Include="KafkaFlow.Microsoft.DependencyInjection" Version="1.4.7" />
+  </ItemGroup>
+
+</Project>

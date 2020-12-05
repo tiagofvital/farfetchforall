@@ -1,0 +1,2 @@
+﻿export const AGGREGATE_CHANGED = Symbol('AGGREGATE.CHANGED')
+export const SHARES_CHANGED = Symbol('SHARES.CHANGED')

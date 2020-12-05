@@ -1,4 +1,4 @@
-﻿namespace FarfetchForAll.ConsoleApp
+﻿namespace FarfetchForAll.Simulator.API
 {
     using System;
     using System.Collections.Generic;
@@ -51,8 +51,6 @@
             container.Collection.Register(typeof(IRequestPostProcessor<,>), new[] { typeof(GenericRequestPostProcessor<,>) });
 
             container.Register(() => new ServiceFactory(container.GetInstance), Lifestyle.Singleton);
-
-            container.Verify();
 
             return this;
         }

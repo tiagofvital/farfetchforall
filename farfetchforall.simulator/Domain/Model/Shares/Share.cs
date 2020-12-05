@@ -1,9 +1,9 @@
 ﻿namespace FarfetchForAll.Simulator.Shares
 {
     using System.Collections.Generic;
+    using System.Linq;
     using FarfetchForAll.Simulator.Domain.Model.Shares;
     using FarfetchForAll.Simulator.DomainEvents;
-    using FarfetchForAll.Simulator.Events;
     using FarfetchForAll.Simulator.Shared;
 
     public class Share : Entity
@@ -56,18 +56,43 @@
                 TransactionId = transactionId
             };
         }
+    }
 
-        public static IEnumerable<Share> From(VestShareCommand vestShareCommand)
+    public class ShareBuilder
+    {
+        private float value;
+
+        private float exerciseCost;
+
+        private int year;
+
+        public ShareBuilder WithShareValue(float value)
         {
-            for (int i = 0; i < vestShareCommand.Amount; i++)
-            {
-                yield return new Share
+            this.value = value;
+            return this;
+        }
+
+        public ShareBuilder WithExerciseCost(float exerciseCost)
+        {
+            this.exerciseCost = exerciseCost;
+            return this;
+        }
+
+        public ShareBuilder WithYear(int year)
+        {
+            this.year = year;
+            return this;
+        }
+
+        public IEnumerable<Share> Build(int amount)
+        {
+            return Enumerable.Range(1, amount)
+                .Select(i => new Share
                 {
-                    ExerciseCost = vestShareCommand.ExerciseCost,
-                    Value = vestShareCommand.ShareValue,
-                    VestedYear = vestShareCommand.Year
-                };
-            }
+                    ExerciseCost = this.exerciseCost,
+                    Value = this.value,
+                    VestedYear = this.year
+                });
         }
     }
 }
